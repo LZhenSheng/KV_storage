@@ -140,6 +140,33 @@ func TestDB_FileLock(t *testing.T) {
 	db2.Close()
 }
 
+func TestDB_Stat(t *testing.T) {
+	opts := DefaultOptions
+	dir, _ := os.MkdirTemp("", "bitcask-go-stat")
+	opts.DirPath = dir
+	db, err := Open(opts)
+	defer destroyDB(db)
+	assert.Nil(t, err)
+	assert.NotNil(t, db)
+
+	_, err = Open(opts)
+	db.Close()
+	db2, err := Open(opts)
+	t.Log(err)
+	db2.Close()
+
+	for i := 100; i < 1000; i++ {
+		err := db.Put(utils.GetTestKey(i), utils.RandomValue(120))
+		assert.Nil(t, err)
+	}
+	for i := 100; i < 1000; i++ {
+		err := db.Delete(utils.GetTestKey(i))
+		assert.Nil(t, err)
+	}
+	stat := db.Stat()
+	t.Log(stat)
+}
+
 func TestDB_Merge(t *testing.T) {
 	opts := DefaultOptions
 	opts.DirPath = "tmp/bitcask-go"

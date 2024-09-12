@@ -3,6 +3,8 @@ package index
 import (
 	"bitcask-go/data"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAdaptiveRadixTree_Put(t *testing.T) {
@@ -23,16 +25,18 @@ func TestAdaptiveRadixTree_Get(t *testing.T) {
 func TestAdaptiveRadixTree_Delete(t *testing.T) {
 	art := NewART()
 
-	res1 := art.Delete([]byte("not exist"))
-	t.Log(res1)
+	res1, ok1 := art.Delete([]byte("not exist"))
+	assert.Nil(t, res1)
+	assert.False(t, ok1)
 
 	art.Put([]byte("key-1"), &data.LogRecordPos{Fid: 1, Offset: 12})
 	pos := art.Get([]byte("key-1"))
 
 	t.Log(pos)
 
-	res2 := art.Delete([]byte("key-1"))
-	t.Log(res2)
+	res2, ok2 := art.Delete([]byte("key-1"))
+	assert.NotNil(t, res2)
+	assert.True(t, ok2)
 }
 
 func TestAdaptiveRadixTree_Size(t *testing.T) {

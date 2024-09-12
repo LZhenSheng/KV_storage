@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewPlusTree_Put(t *testing.T) {
@@ -50,14 +52,16 @@ func TestBPlusTree_Delete(t *testing.T) {
 		_ = os.Remove(path)
 	}()
 	tree := NewBPlusTree(path, false)
-	res := tree.Delete([]byte("not exist"))
-	t.Log(res)
+	res, ok := tree.Delete([]byte("not exist"))
+	assert.Nil(t, res)
+	assert.False(t, ok)
 
 	tree.Put([]byte("acc"), &data.LogRecordPos{Fid: 123, Offset: 9999})
 	pos := tree.Get([]byte("acc"))
 	t.Log(pos)
-	res = tree.Delete([]byte("acc"))
-	t.Log(res)
+	res, ok = tree.Delete([]byte("acc"))
+	assert.NotNil(t, res)
+	assert.True(t, ok)
 }
 
 func TestBPlusTree_Size(t *testing.T) {

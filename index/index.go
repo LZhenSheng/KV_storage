@@ -36,10 +36,10 @@ func NewIndexer(typ IndexType, dirPath string, sync bool) Indexer {
 	switch typ {
 	case Btree:
 		return NewBTree()
-	// case ART:
-	// 	return NewART()
-	// case BPTree:
-	// 	return NewBPlusTree(dirPath, sync)
+	case ART:
+		return NewART()
+	case BPTree:
+		return NewBPlusTree(dirPath, sync)
 	default:
 		panic("unsupported index type")
 	}
