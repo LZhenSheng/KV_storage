@@ -4,6 +4,7 @@ import (
 	"bitcask-go/data"
 	"bitcask-go/fio"
 	"bitcask-go/index"
+	"bitcask-go/utils"
 	"errors"
 	"fmt"
 	"io"
@@ -182,11 +183,15 @@ func (db *DB) Stat() *Stat {
 	if db.activeFile != nil {
 		dataFiles += 1
 	}
+	dirSize, err := utils.DirSize(db.options.DirPath)
+	if err != nil {
+		panic(fmt.Sprintf("failed to get dir size:%v", err))
+	}
 	return &Stat{
 		KeyNum:          uint(db.index.Size()),
 		DataFileNum:     dataFiles,
 		ReclaimableSize: db.reclaimSize,
-		DiskSize:        0, //todo
+		DiskSize:        dirSize, //todo
 	}
 
 }
@@ -541,6 +546,9 @@ func checkOptions(options Options) error {
 	}
 	if options.DataFileSize <= 0 {
 		return errors.New("database data file size must be greater than 0")
+	}
+	if options.DataFileMergeRatio < 0 || options.DataFileMergeRatio > 1 {
+		return errors.New("invalid merge ration,must between 0 and 1")
 	}
 	return nil
 }

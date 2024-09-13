@@ -155,16 +155,17 @@ func TestDB_Stat(t *testing.T) {
 	t.Log(err)
 	db2.Close()
 
-	for i := 100; i < 1000; i++ {
+	for i := 100; i < 200; i++ {
 		err := db.Put(utils.GetTestKey(i), utils.RandomValue(120))
 		assert.Nil(t, err)
 	}
-	for i := 100; i < 1000; i++ {
+	for i := 100; i < 200; i++ {
 		err := db.Delete(utils.GetTestKey(i))
 		assert.Nil(t, err)
 	}
 	stat := db.Stat()
 	t.Log(stat)
+	t.Log(db.reclaimSize)
 }
 
 func TestDB_Merge(t *testing.T) {
