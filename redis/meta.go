@@ -111,3 +111,24 @@ func (sk *setInteralKey) encode() []byte {
 	binary.LittleEndian.PutUint32(buf[index:], uint32(len(sk.member)))
 	return buf
 }
+
+type listInteralKey struct {
+	key     []byte
+	version int64
+	index   uint64
+}
+
+func (lk *listInteralKey) encode() []byte {
+	buf := make([]byte, len(lk.key)+8+8)
+	//key
+	var index = 0
+	copy(buf[index:index+len(lk.key)], lk.key)
+	index += len(lk.key)
+	//version
+	binary.LittleEndian.PutUint64(buf[index:index+8], uint64(lk.version))
+	index += 8
+	//index
+	binary.LittleEndian.PutUint64(buf[index:], lk.index)
+	return buf
+
+}

@@ -156,3 +156,48 @@ func TestRedisDataStructure_SRem(t *testing.T) {
 	t.Log(ok, err)
 
 }
+func TestRedisDataStructure_LPop(t *testing.T) {
+	opts := bitcask.DefaultOptions
+	dir, _ := os.MkdirTemp("", "bitcask-go-redis-list")
+	opts.DirPath = dir
+	rds, err := NewRedisDataStructure(opts)
+	assert.Nil(t, err)
+
+	res, err := rds.LPush(utils.GetTestKey(1), []byte("val-1"))
+	t.Log(res, err)
+	res, err = rds.LPush(utils.GetTestKey(1), []byte("val-1"))
+	t.Log(res, err)
+	res, err = rds.LPush(utils.GetTestKey(1), []byte("val-2"))
+	t.Log(res, err)
+
+	val, err := rds.LPop(utils.GetTestKey(1))
+	t.Log(string(val), err)
+	val, err = rds.LPop(utils.GetTestKey(1))
+	t.Log(string(val), err)
+	val, err = rds.LPop(utils.GetTestKey(1))
+	t.Log(string(val), err)
+
+}
+
+func TestRedisDataStructure_RPop(t *testing.T) {
+	opts := bitcask.DefaultOptions
+	dir, _ := os.MkdirTemp("", "bitcask-go-redis-rpop")
+	opts.DirPath = dir
+	rds, err := NewRedisDataStructure(opts)
+	assert.Nil(t, err)
+
+	res, err := rds.RPush(utils.GetTestKey(1), []byte("val-1"))
+	t.Log(res, err)
+	res, err = rds.RPush(utils.GetTestKey(1), []byte("val-1"))
+	t.Log(res, err)
+	res, err = rds.RPush(utils.GetTestKey(1), []byte("val-2"))
+	t.Log(res, err)
+
+	val, err := rds.RPop(utils.GetTestKey(1))
+	t.Log(string(val), err)
+	val, err = rds.RPop(utils.GetTestKey(1))
+	t.Log(string(val), err)
+	val, err = rds.RPop(utils.GetTestKey(1))
+	t.Log(string(val), err)
+
+}
