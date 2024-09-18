@@ -110,3 +110,49 @@ func TestRedisDataStructure_HDel(t *testing.T) {
 	val2, err := rds.HGet(utils.GetTestKey(1), []byte("field3"))
 	t.Log(val2)
 }
+
+func TestRedisDataStructure_SIsMember(t *testing.T) {
+	opts := bitcask.DefaultOptions
+	dir, _ := os.MkdirTemp("", "bitcask-go-redis-SIsMember")
+	opts.DirPath = dir
+	rds, err := NewRedisDataStructure(opts)
+	assert.Nil(t, err)
+
+	ok, err := rds.SAdd(utils.GetTestKey(1), []byte("val-1"))
+	t.Log(ok)
+	ok, err = rds.SAdd(utils.GetTestKey(1), []byte("val-1"))
+	t.Log(ok)
+	ok, err = rds.SAdd(utils.GetTestKey(1), []byte("val-2"))
+	t.Log(ok)
+	ok, err = rds.SIsMember(utils.GetTestKey(2), []byte("val-1"))
+	t.Log(ok, err)
+	ok, err = rds.SIsMember(utils.GetTestKey(1), []byte("val-1"))
+	t.Log(ok, err)
+
+	ok, err = rds.SIsMember(utils.GetTestKey(1), []byte("val-2"))
+	t.Log(ok, err)
+
+	ok, err = rds.SIsMember(utils.GetTestKey(1), []byte("val-not-found"))
+	t.Log(ok, err)
+
+}
+
+func TestRedisDataStructure_SRem(t *testing.T) {
+	opts := bitcask.DefaultOptions
+	dir, _ := os.MkdirTemp("", "bitcask-go-redis-SRem")
+	opts.DirPath = dir
+	rds, err := NewRedisDataStructure(opts)
+	assert.Nil(t, err)
+
+	ok, err := rds.SAdd(utils.GetTestKey(1), []byte("val-1"))
+	t.Log(ok)
+	ok, err = rds.SAdd(utils.GetTestKey(1), []byte("val-1"))
+	t.Log(ok)
+	ok, err = rds.SAdd(utils.GetTestKey(1), []byte("val-2"))
+
+	ok, err = rds.SRem(utils.GetTestKey(2), []byte("val-1"))
+	t.Log(ok, err)
+	ok, err = rds.SRem(utils.GetTestKey(1), []byte("val-1"))
+	t.Log(ok, err)
+
+}
